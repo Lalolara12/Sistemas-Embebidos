@@ -1,10 +1,10 @@
 # Sistemas-Embebidos
 
 1. Requisitos Técnicos
-1.1 Microcontrolador (PIC16F877A)
-Componentes usados:
-Componente
-Función en el Proyecto
+2.   1.1 Microcontrolador (PIC16F877A)
+3.   Componentes usados:
+4.   Componente
+5.   Función en el Proyecto
 Conexión con PIC16F877A
 PIC16F877A (U1) - Cerebro del sistema. Controla LCD, botones y LEDs. Ejecuta la lógica de dispensación. - Todos los componentes se conectan a sus puertos.
 Cristal (X1) - Proporciona señal de reloj a 4 MHz para sincronización. - Conectado a OSC1 y OSC2 (pines 13 y 14).
