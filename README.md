@@ -19,6 +19,37 @@ La construcción de este proyecto tiene varias justificaciones:
 
 Este proyecto no solo demuestra habilidades técnicas, sino que también sirve como base para aplicaciones comerciales reales, donde los sistemas automatizados de ventas están cada vez más presentes.
 
+### REQUISITOS POR MÓDULO/COMPONENTE
+
+1. Microcontrolador PIC16F877A
+- Gestionar la lógica de navegación del menú de dulces.
+- Recibir señales de entrada de los botones.
+- Controlar la salida de LEDs y pantalla LCD.
+- Almacenar y procesar la información de las compras.
+
+2. Pantalla LCD 16x2
+- Mostrar el nombre del dulce actualmente seleccionado.
+- Mostrar la cantidad seleccionada.
+- Mostrar el resumen de la compra al final (cantidad, tipo de dulce, precio total).
+- Mostrar mensajes especiales (por ejemplo, "Ganaste descuento").
+
+3. Botones
+- Botón "Subir": Avanzar al siguiente producto en el menú o aumentar cantidad.
+- Botón "Bajar": Retroceder al producto anterior o disminuir cantidad.
+- Botón "Seleccionar": Confirmar la selección actual o añadir otro producto.
+- Botón "Pagar": Finalizar la compra y mostrar resumen.
+
+4. LEDs
+- Encender el LED correspondiente cuando se presiona un botón.
+- Mantener los LEDs apagados si no hay interacción.
+
+5. Software (PICC Compiler y Proteus)
+- El software debe ser capaz de compilar el código C y generar un archivo .hex compatible con el PIC.
+- Proteus debe permitir simular el circuito para detectar errores antes de realizar el montaje físico.
+
+6. Fuente de alimentación
+- Proporcionar 5V estables para alimentar el PIC, la pantalla LCD, los LEDs y los botones.
+
 
 ### Hardware:
 
