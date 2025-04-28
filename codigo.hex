@@ -1,0 +1,416 @@
+//Librería/biblioteca del dispositivo que vamos a programar (el PIC).
+#include <16F877A.h>
+
+/*Fusibles para utilizar un cristal/oscilador externo (XT) y desactivar el 
+Watchdog timer (NOWDT). El Watchdog timer (WDT) hace que el PIC se despierte si
+este entra en modo reposo.*/
+#fuses XT,NOWDT
+
+/*Directiva de preprocesador para configurar como entradas o salidas los 
+pines/puertos A y D del PIC.*/
+#use FAST_IO(A)
+#use FAST_IO(D)
+
+/*Frecuencia a la que va a trabajar el PIC. En este caso clock=4000000 para 
+que se sincronice correctamente con la LCD.*/
+#use delay(clock=4M)
+
+//Librería para utilizar características o funciones de la pantalla LCD.
+#include <lcd.c>
+
+/*Macro para restringir la cantidad de selecciones que puede hacer el usuario
+en cada compra. Aunque solamente hay cuatro productos, el usuarios puede hacer 
+5 selecciones (repitiendo productos)*/
+#define TAM_MAX_COMPRA 5
+
+enum Dulce{
+   amargo,suizo,caramelizado,festin,ninguno
+};
+
+enum Apartado{
+   productos,cantidad,confirmacionPago,factura
+};
+
+struct Compra{
+   Dulce producto;
+   float precio;
+   unsigned int8 cantidad;
+};
+
+void mostrarProductos(Dulce );
+void pedirCantidad(unsigned int8 );
+void mostrarConfirmacionPago(void);
+float precioDulce(Dulce );
+void agregarProducto(struct Compra *carritoCompra,Dulce ,unsigned int8 &cantidadProductos,unsigned int8 &cantidadSelecciones);
+float hallarTotal(struct Compra carritoCompra[],unsigned int8 );
+void mensajeGanadorDescuento(void);
+void mostrarFactura(struct Compra carritoCompra[],unsigned int8, float);
+
+void main(){
+     
+   set_tris_b(0x00); //Los pines B serán salidas. Pines para los LEDS.
+   set_tris_c(0xff); //Los pines C serán entradas que provienen de pulsadores.
+   //set_tris_d(0x00);  //Parece que la LCD ya define el funcionamiento de estos pines
+   
+   output_b(0x00);  //Las salidas de los pines B comienzan apagadas.
+   
+   lcd_init(); //Inicializa la LCD sincronizada con el PIC.
+   
+   //Indica la sección del programa en donde se encuentra el usuario.
+   Apartado apartado=productos;
+   
+   Dulce dulce=amargo;//Indica el tipo de dulce que selecciona el usuario.
+   
+   unsigned int8 cantidadProductos=0;
+   
+   //Arreglo para guardar los productos que selecciona cada cliente.
+   struct Compra carritoCompra[TAM_MAX_COMPRA];
+   
+   //Cada vez que se añada una cantidad de productos al carrito, esta variable aumenta.
+   unsigned int8 cantidadSelecciones=0;
+   
+   //Solamente incrementa si la «compra» realizada vale más que cero.
+   unsigned int8 cantidadCompradores=0;
+   
+   mostrarProductos(dulce);
+   
+   while(TRUE){           
+      
+      //Funcionalidad del botón para bajar en la lista
+      if(input(PIN_C0)==1){//Si se activó el botón para subir en la lista
+         while(input(PIN_C0)==1);//Detener hasta que el botón UP ya no envíe pulsos
+         
+         output_high(PIN_B0);
+         
+         switch(apartado){
+            case productos:{
+               if(dulce==amargo){
+                  dulce=festin;
+               }else{
+                  dulce--;
+               }
+               mostrarProductos(dulce);
+               break;
+            }
+            case cantidad:{
+               cantidadProductos--;
+               pedirCantidad(cantidadProductos);
+               break;
+            }
+            default:break;
+         }
+         
+         delay_ms(200);
+         output_low(PIN_B0);
+         
+      }
+      
+      //Funcionalidad del botón para subir en la lista
+      if(input(PIN_C1)==1){//Si se activó el botón para bajar en la lista
+         while(input(PIN_C1)==1);//Detener hasta que el botón DOWN ya no envíe pulsos
+         
+         output_high(PIN_B1);
+         
+         switch(apartado){
+            case productos:{
+               if(dulce==festin){//Si es el último dulce, entonces continuo con el primero
+                  dulce=amargo;
+               }else{
+                  dulce++;
+               }
+               mostrarProductos(dulce);
+               break;
+            }
+            case cantidad:{
+               cantidadProductos++;
+               pedirCantidad(cantidadProductos);
+               break;
+            }
+            default:break;
+         }
+         
+         delay_ms(200);
+         output_low(PIN_B1);
+      }
+      
+      //Funcionalidad del botón 1. Pulsador de selección.
+      if(input(PIN_C2)==1){
+         while(input(PIN_C2)==1);
+         
+         output_high(PIN_B2);
+         
+         switch(apartado){
+            case productos:{
+               pedirCantidad(cantidadProductos);
+               break;
+            }
+            case cantidad:{
+               agregarProducto(carritoCompra,dulce,cantidadProductos,cantidadSelecciones);
+               mostrarConfirmacionPago();
+               break;
+            }
+            case confirmacionPago:{
+               if(cantidadSelecciones==TAM_MAX_COMPRA){
+                  lcd_putc('\f');
+                  lcd_gotoxy(1,1);
+                  printf(lcd_putc,"Cantidad maxima");
+                  lcd_gotoxy(1,2);
+                  printf(lcd_putc,"alcanzada");
+                  cantidadSelecciones++;
+                  continue;
+               }else if(cantidadSelecciones<TAM_MAX_COMPRA){
+                  apartado=productos;                  
+                  mostrarProductos(dulce);
+                  delay_ms(200);
+                  output_low(PIN_B2);
+                  
+                  /*Para que ignore el resto y no me aumente la sección de 
+                  programa en la que va el usuario*/
+                  continue;
+                  //break;
+               }else if(cantidadSelecciones>TAM_MAX_COMPRA){
+                     cantidadSelecciones--;
+                     mostrarConfirmacionPago();
+                     continue;
+               }
+               break;
+            }
+            default:{
+               break;
+            }
+         }
+         
+         apartado++;
+         
+         delay_ms(200);
+         output_low(PIN_B2);
+      }
+      
+      //Funcionalidad del botón 2. Pulsador de pago.
+      if(input(PIN_C3)==1){
+         while(input(PIN_C3)==1);
+         
+         
+         if(apartado==confirmacionPago){
+            output_high(PIN_B3);
+            
+            if(hallarTotal(carritoCompra,cantidadSelecciones)>0){
+               cantidadCompradores++;
+            }
+            
+            if(cantidadCompradores%5==0&&cantidadCompradores!=0){
+               mensajeGanadorDescuento();
+               
+               output_high(PIN_B3);
+               
+               //Calcular el 70% del total es equivalente descontar el 30% de la compra. 
+               mostrarFactura(carritoCompra,cantidadSelecciones,hallarTotal(carritoCompra,cantidadSelecciones)*(70.0/100.0));
+            }else{
+               mostrarFactura(carritoCompra,cantidadSelecciones,hallarTotal(carritoCompra,cantidadSelecciones));
+            }
+            
+            apartado++;            
+         }  
+         
+         //output_high(PIN_B3); Se apaga más abajo
+                          
+      }
+      
+      //Después de 5 segundos de haber mostrado la factura, se vuelve al menú de productos.
+      if(apartado==factura){
+         delay_ms(10000);
+         
+         //Se coloca en ceros la factura.
+         cantidadProductos=0;
+         
+         unsigned int8 i=0;
+         
+         /Recorre únicamente las posiciones que se utilizaron./
+         while(i<cantidadSelecciones){            
+            //Esta función incrementa en uno la variable i
+            agregarProducto(carritoCompra,ninguno,cantidadProductos,i);
+         }
+         cantidadSelecciones=0;
+         apartado=productos;                  
+         mostrarProductos(dulce);
+         
+         //delay_ms(200);
+         output_low(PIN_B3); 
+      }
+      
+   }
+void mostrarProductos(Dulce dulce){
+   lcd_putc('\f');
+   lcd_gotoxy(1,1);
+   switch(dulce){
+      case amargo:{
+         printf(lcd_putc,"Dulce: Amargo");
+         lcd_gotoxy(1,2);
+         printf(lcd_putc,"Precio: $1,5");
+         break;
+      }
+      case suizo:{
+         printf(lcd_putc,"Dulce: Suizo");
+         lcd_gotoxy(1,2);
+         printf(lcd_putc,"Precio: $3");
+         break;
+      }
+      case caramelizado:{
+         printf(lcd_putc,"Dulce: Caramelizado");
+         lcd_gotoxy(1,2);
+         printf(lcd_putc,"Precio: $5");
+         break;
+      }
+      case festin:{
+         printf(lcd_putc,"Dulce: Festin");
+         lcd_gotoxy(1,2);
+         printf(lcd_putc,"Precio: $4");
+         break;
+      }
+      default:{
+         printf(lcd_putc,"¡Fuera de rango!");
+         break;//Un poco redundante, pero creo que se recomienda.         
+      }
+   }
+}
+
+void pedirCantidad(unsigned int8 cantidadProductos){
+   lcd_putc('\f');
+   lcd_gotoxy(1,1);
+   printf(lcd_putc,"Cantidad: %u",cantidadProductos);
+   lcd_gotoxy(1,2);
+   printf(lcd_putc,"1. Si");
+}
+
+void mostrarConfirmacionPago(void){
+   lcd_putc('\f');
+   lcd_gotoxy(1,1);
+   printf(lcd_putc,"1. Adicionar otra referencia");
+   lcd_gotoxy(1,2);
+   printf(lcd_putc,"2. Pagar seleccion");
+   
+   char txt1[]="Adicionar otra referencia";//txt1[26]='\0';
+   char txt2[]="Pagar seleccion";
+   
+   unsigned int8 n=0;
+   
+   //Desplazar el texto en pantalla
+   while(n<14){  
+      delay_ms(110);
+      unsigned int8 m=n,i=0;
+      while(txt1[m]!='\0'){
+         if(m<=24){
+            lcd_gotoxy(i+4,1);
+            printf(lcd_putc,"%c",txt1[m]);
+            printf(lcd_putc,"\b");
+         }
+         if(m<=15&&txt2[m]!='\0'){
+            lcd_gotoxy(i+4,2);
+            printf(lcd_putc,"%c",txt2[m]);
+            printf(lcd_putc,"\b");
+         }
+         i++;
+         m++;
+      }
+      n++;delay_ms(10);
+   }
+   
+   lcd_putc('\f');
+   lcd_gotoxy(1,1);
+   printf(lcd_putc,"1. Adicionar otra referencia");
+   lcd_gotoxy(1,2);
+   printf(lcd_putc,"2. Pagar seleccion");
+}
+
+float precioDulce(Dulce dulce){
+   switch(dulce){
+      case amargo:
+         return 1.5;
+         break;
+      case suizo:
+         return 3.0;
+         break;
+      case caramelizado:
+         return 5.0;
+         break;
+      case festin:
+         return 4.0;
+         break;
+      case ninguno:
+         return 0.0;
+         break;
+      default:
+         return -1;
+   }
+}
+
+void agregarProducto(struct Compra carritoCompra[],Dulce dulce,
+                  unsigned int8 &cantidadProductos,unsigned int8 &cantidadSelecciones){
+
+   carritoCompra[cantidadSelecciones].producto=dulce;
+   carritoCompra[cantidadSelecciones].precio=precioDulce(dulce);
+   carritoCompra[cantidadSelecciones].cantidad=cantidadProductos;
+   cantidadProductos=0;
+   cantidadSelecciones++;
+}
+
+float hallarTotal(struct Compra carritoCompra[],unsigned int8 cantidadSelecciones){
+   float total=0;
+   for(unsigned int8 i=0;i<cantidadSelecciones;i++){
+      total+=/(float)/carritoCompra[i].cantidad*carritoCompra[i].precio;
+   }
+   return total;
+}
+
+void mensajeGanadorDescuento(void){
+    lcd_putc('\f');
+    lcd_gotoxy(1,1);
+    printf(lcd_putc,"Ganador(a) del");
+    lcd_gotoxy(1,2);
+    printf(lcd_putc,"descuento");
+    
+    //Secuencia de LEDs
+    for(unsigned int8 k=1;k<=4;k++){   //Se repite 4 veces la secuencia
+       output_b(0x00);
+       unsigned int8 inicio=0b01001001;
+       for(unsigned int8 i=1;i<4;i++){
+         output_b(inicio);
+         delay_ms(200);
+         inicio>>=1;
+       }         
+       for(unsigned int8 j=1;j<4;j++){
+         output_b(inicio);
+         delay_ms(200);
+         inicio<<=1;
+       }
+       output_b(inicio+0b00000001);
+       delay_ms(100);
+    }
+    output_b(0x00);
+}
+
+void mostrarFactura(struct Compra carritoCompra[],unsigned int8 cantidadSelecciones,float totalCompra){
+   unsigned int16 a=0,s=0,c=0,f=0;//inicial de los chocolates
+   
+   /*El arreglo de la estructura carritoCompra puede contener dos productos 
+   iguales en diferentes posiciones. Con este ciclo for contamos las cantidades 
+   totales de cada producto y las vamos guardando en las variables a,s,c y f.*/
+   for(unsigned int8 i=0;i<cantidadSelecciones;i++){
+      if(carritoCompra[i].producto==amargo){
+         a+=carritoCompra[i].cantidad;
+      }else if(carritoCompra[i].producto==suizo){
+         s+=carritoCompra[i].cantidad;
+      }else if(carritoCompra[i].producto==caramelizado){
+         c+=carritoCompra[i].cantidad;
+      }else if(carritoCompra[i].producto==festin){
+         f+=carritoCompra[i].cantidad;
+      }
+   }
+   
+    //Muestra el total de la compra.
+    lcd_putc('\f');
+    lcd_gotoxy(1,1);
+    printf(lcd_putc,"A%lu, S%lu, C%lu, F%lu",a,s,c,f);
+    lcd_gotoxy(1,2);
+    printf(lcd_putc,"Total: $%1.2f",totalCompra);
+}
