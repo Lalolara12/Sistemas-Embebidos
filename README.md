@@ -133,3 +133,7 @@ Controlados por PORTB (ej.: PORTB = 0x01 enciende D1).
 Implementación UART (Serial) 
 Para Monitoreo Externo La comunicación UART permite monitorear en tiempo real las transacciones de la máquina dispensadora desde una PC, facilitando: Registro de ventas (backup), Depuración durante desarrollo, Integración con sistemas externos
 
+
+# Diagrama de proteus
+
+![WhatsApp Image 2025-04-24 at 7 30 06 PM](https://github.com/user-attachments/assets/6cb9c0ff-1d99-4728-ad44-e3df836167b1)
