@@ -50,6 +50,15 @@ Este proyecto no solo demuestra habilidades técnicas, sino que también sirve c
 6. Fuente de alimentación
 - Proporcionar 5V estables para alimentar el PIC, la pantalla LCD, los LEDs y los botones.
 
+ # 1. Pruebas Unitarias (Validación de Módulos Individuales)
+Objetivo: Verificar que cada componente funcione de forma aislada.
+
+Módulo	Prueba Realizada	Método de Validación	Resultado Esperado
+LCD	Mostrar texto y números	Envío de comandos desde el PIC	Caracteres legibles sin distorsión
+Botones	Detección de pulsaciones	Simulación en Proteus + montaje físico	Registro preciso sin rebotes
+UART	Transmisión de datos a PC	Terminal serial (Putty/TeraTerm)	Datos recibidos sin corrupción
+Lógica de Negocio	Cálculo de totales y descuentos	Valores fijos en código (ej.: 5 compras = 10% descuento)	
+
 
 ### Hardware:
 
