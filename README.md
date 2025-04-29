@@ -187,6 +187,8 @@ Para Monitoreo Externo La comunicación UART permite monitorear en tiempo real l
 # Diagrama de proteus
 
 ![WhatsApp Image 2025-04-24 at 7 30 06 PM](https://github.com/user-attachments/assets/6cb9c0ff-1d99-4728-ad44-e3df836167b1)
+![image](https://github.com/user-attachments/assets/7674b2e6-5714-4d8f-a6df-e43986510416)
+
 
 
 # Conclusión Final del Proyecto: Máquina Dispensadora de Dulces con PIC16F877A
