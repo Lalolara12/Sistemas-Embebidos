@@ -43,8 +43,7 @@ Este proyecto no solo demuestra habilidades técnicas, sino que también sirve c
 - Encender el LED correspondiente cuando se presiona un botón.
 - Mantener los LEDs apagados si no hay interacción.
 
-5. Software (PICC Compiler y Proteus)
-- El software debe ser capaz de compilar el código C y generar un archivo .hex compatible con el PIC.
+5. Software (Proteus)
 - Proteus debe permitir simular el circuito para detectar errores antes de realizar el montaje físico.
 
 6. Fuente de alimentación
