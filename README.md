@@ -169,6 +169,11 @@ LEDs - Feedback visual: - D1: Selección activa. - D2: Pago exitoso. - D3: Descu
 
 Controlados por PORTB (ej.: PORTB = 0x01 enciende D1).
 
+## 1.4 Requisitos de Comunicación y Control
+### 3.1 Comunicación de Datos
+Implementación UART (Serial) 
+Para Monitoreo Externo La comunicación UART permite monitorear en tiempo real las transacciones de la máquina dispensadora desde una PC, facilitando: Registro de ventas (backup), Depuración durante desarrollo, Integración con sistemas externos
+
 ## 1.4 Desarrollo de Software
 ### Se encuentra en un archivo dentro del github
 
@@ -176,11 +181,6 @@ Controlados por PORTB (ej.: PORTB = 0x01 enciende D1).
 
 ![deepseek_mermaid_20250428_78dd67](https://github.com/user-attachments/assets/900e6c83-d3d3-4a7d-bccf-6ca02448503a)
 ![deepseek_mermaid_20250428_3d063b](https://github.com/user-attachments/assets/eb423cd4-eacc-406e-8830-c379c1db392c)
-
-## 1.4 Requisitos de Comunicación y Control
-### 3.1 Comunicación de Datos
-Implementación UART (Serial) 
-Para Monitoreo Externo La comunicación UART permite monitorear en tiempo real las transacciones de la máquina dispensadora desde una PC, facilitando: Registro de ventas (backup), Depuración durante desarrollo, Integración con sistemas externos
 
 
 # Diagrama de proteus
