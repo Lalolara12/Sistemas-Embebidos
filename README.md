@@ -54,9 +54,13 @@ Este proyecto no solo demuestra habilidades técnicas, sino que también sirve c
 Objetivo: Verificar que cada componente funcione de forma aislada.
 
 Módulo	Prueba Realizada	Método de Validación	Resultado Esperado
+
 LCD	Mostrar texto y números	Envío de comandos desde el PIC	Caracteres legibles sin distorsión
+
 Botones	Detección de pulsaciones	Simulación en Proteus + montaje físico	Registro preciso sin rebotes
+
 UART	Transmisión de datos a PC	Terminal serial (Putty/TeraTerm)	Datos recibidos sin corrupción
+
 Lógica de Negocio	Cálculo de totales y descuentos	Valores fijos en código (ej.: 5 compras = 10% descuento)	
 
 # 2. Pruebas de Integración (Interacción entre Módulos)
@@ -64,10 +68,35 @@ Lógica de Negocio	Cálculo de totales y descuentos	Valores fijos en código (ej
 Objetivo: Confirmar que los componentes trabajen correctamente al combinarse.
 
 Escenario	Procedimiento	Validación Exitosa
+
 Selección de producto	Presionar botón UP/DOWN + ver LCD	Cambio de ítem en pantalla + LED de selección
+
 Proceso de pago	Oprimir botón PAY con compras válidas	LCD muestra total + LEDs de confirmación
+
 Descuento automático	Realizar 5 compras > $0	Mensaje "DESCUENTO 10%" + secuencia de LEDs
 
+
+# 3. Pruebas de Estrés (Límites del Sistema)
+
+Objetivo: Evaluar el comportamiento en condiciones extremas.
+
+Caso de Prueba	Entrada	Salida Esperada
+
+Cantidad máxima (255)	Seleccionar 255 unidades	Sistema acepta la transacción
+
+Cantidad inválida (0)	Ingresar 0 unidades	Mensaje de error "CANTIDAD NO VÁLIDA"
+
+Multiples pulsaciones rápidas	Presionar botones 20 veces/seg	No registra pulsaciones fantasmas
+
+# Puntos Clave del Código para Presentación
+✅ 1. Estructura Modular y Organización
+Librerías personalizadas para LCD, botones y UART, Separación clara entre lógica de negocio y control de hardware.
+✅2. Optimización de Recursos
+Uso eficiente de memoria:
+✅3. Funciones Críticas
+Debouncing de botones (evita pulsaciones falsas):
+✅4. Validación Robusta
+Control de errores
 
 ### Hardware:
 
