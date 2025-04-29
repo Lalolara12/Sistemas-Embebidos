@@ -190,8 +190,8 @@ Para Monitoreo Externo La comunicación UART permite monitorear en tiempo real l
 
 
 
-# Conclusión Final del Proyecto: Máquina Dispensadora de Dulces con PIC16F877A
-Este proyecto representó un éxito rotundo en el desarrollo de un sistema embebido completo, demostrando la viabilidad técnica y práctica de implementar una máquina dispensadora automatizada utilizando el microcontrolador PIC16F877A. A lo largo del proceso, no solo se cumplieron todos los objetivos iniciales, sino que se superaron las expectativas en términos de funcionalidad, robustez y potencial de escalamiento.
+# Conclusión Final
+El desarrollo de un sistema embebido completo, demostrando la viabilidad técnica y práctica de implementar una máquina dispensadora automatizada utilizando el microcontrolador PIC16F877A. A lo largo del proceso, no solo se cumplieron todos los objetivos iniciales, sino que se superaron las expectativas en términos de funcionalidad, robustez y potencial de escalamiento.
 
 El sistema desarrollado integra perfectamente componentes hardware y software para ofrecer una solución funcional y eficiente. La interfaz de usuario, compuesta por una pantalla LCD de 16x2 caracteres, cuatro botones táctiles y LEDs indicadores, proporciona una experiencia intuitiva y amigable para el usuario final. La lógica de control implementada permite gestionar de manera efectiva el proceso completo de selección de productos, configuración de cantidades y procesamiento de pagos, incluyendo un innovador sistema de descuentos automatizado.
 
