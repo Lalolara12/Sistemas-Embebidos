@@ -59,6 +59,15 @@ Botones	Detección de pulsaciones	Simulación en Proteus + montaje físico	Regis
 UART	Transmisión de datos a PC	Terminal serial (Putty/TeraTerm)	Datos recibidos sin corrupción
 Lógica de Negocio	Cálculo de totales y descuentos	Valores fijos en código (ej.: 5 compras = 10% descuento)	
 
+# 2. Pruebas de Integración (Interacción entre Módulos)
+
+Objetivo: Confirmar que los componentes trabajen correctamente al combinarse.
+
+Escenario	Procedimiento	Validación Exitosa
+Selección de producto	Presionar botón UP/DOWN + ver LCD	Cambio de ítem en pantalla + LED de selección
+Proceso de pago	Oprimir botón PAY con compras válidas	LCD muestra total + LEDs de confirmación
+Descuento automático	Realizar 5 compras > $0	Mensaje "DESCUENTO 10%" + secuencia de LEDs
+
 
 ### Hardware:
 
