@@ -88,13 +88,16 @@ Cantidad inválida (0)	Ingresar 0 unidades	Mensaje de error "CANTIDAD NO VÁLIDA
 
 Multiples pulsaciones rápidas	Presionar botones 20 veces/seg	No registra pulsaciones fantasmas
 
-# Puntos Clave del Código para Presentación
+# Puntos Clave del Código
 ✅ 1. Estructura Modular y Organización
 Librerías personalizadas para LCD, botones y UART, Separación clara entre lógica de negocio y control de hardware.
+
 ✅2. Optimización de Recursos
 Uso eficiente de memoria:
+
 ✅3. Funciones Críticas
 Debouncing de botones (evita pulsaciones falsas):
+
 ✅4. Validación Robusta
 Control de errores
 
